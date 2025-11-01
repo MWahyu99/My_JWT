@@ -30,10 +30,25 @@ app.post("/proxy", async (req, res) => {
       { algorithm: "HS256", expiresIn: "5m" }
     );
 
-    // kirim ke endpoint SIHKA
-    const response = await axios.post(TARGET_URL, payload, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  const fullPayload = {
+  id_pos: 1,
+  uid: "06.14.02030310030",
+  name: "PCH Sempaja",
+  tzone: "Asia/Jakarta",
+  timestamp: new Date().toISOString(),
+  sensor: [
+    { rainfall },
+    { sensor_name: "Rainfall", value: rainfall.toString() },
+  ],
+};
+
+const response = await axios.post(
+  TARGET_URL,
+  fullPayload,
+  { headers: { Authorization: `Bearer ${token}` } }
+);
+
+
 
     res.json({ success: true, data: response.data });
   } catch (error) {
@@ -44,3 +59,4 @@ app.post("/proxy", async (req, res) => {
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`✅ Proxy running on port ${PORT}`));
+
