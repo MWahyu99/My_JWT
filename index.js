@@ -9,10 +9,11 @@ const JWT_SECRET = "da3Aix7uf2ieth8eihuH0iNg5aeheeto";
 const TARGET_URL = "https://sihka.dev-tunnels.id/send/kal_iv";
 
 app.post("/proxy", async (req, res) => {
-  try {
-    const { rainfall } = req.body; // ambil nilai rainfall dari ThingsBoard
+  console.log("📩 Incoming request:", req.body);
 
-    // buat payload lengkap
+  try {
+    const { rainfall } = req.body;
+
     const fullPayload = {
       id_pos: 1,
       uid: "06.14.02030310030",
@@ -25,31 +26,32 @@ app.post("/proxy", async (req, res) => {
       ],
     };
 
-    // buat JWT token
     const token = jwt.sign(fullPayload, JWT_SECRET, {
       algorithm: "HS256",
       expiresIn: "5m",
     });
 
-   // kirim token ke endpoint SIHKA
-const response = await axios.post(
-  TARGET_URL,
-  { token: token },
-  {
-    headers: { "Content-Type": "application/json" },
-  }
-);
+    const response = await axios.post(
+      TARGET_URL,
+      { token: token },
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    console.log("✅ Token sent to SIHKA:", token.substring(0, 40) + "...");
+    console.log("📤 Response from SIHKA:", response.data);
 
     res.json({ success: true, data: response.data });
   } catch (error) {
-    console.error("Error:", error.message);
+    console.error("❌ Error:", error.message);
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
 
+
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`✅ Proxy running on port ${PORT}`));
+
 
 
 
