@@ -31,10 +31,14 @@ app.post("/proxy", async (req, res) => {
       expiresIn: "5m",
     });
 
-    // kirim ke endpoint SIHKA
-    const response = await axios.post(TARGET_URL, fullPayload, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+   // kirim token ke endpoint SIHKA
+const response = await axios.post(
+  TARGET_URL,
+  { token: token },
+  {
+    headers: { "Content-Type": "application/json" },
+  }
+);
 
     res.json({ success: true, data: response.data });
   } catch (error) {
@@ -46,5 +50,6 @@ app.post("/proxy", async (req, res) => {
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`✅ Proxy running on port ${PORT}`));
+
 
 
