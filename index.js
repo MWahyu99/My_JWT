@@ -21,8 +21,7 @@ app.post("/proxy", async (req, res) => {
       tzone: "Asia/Jakarta",
       timestamp: new Date().toISOString(),
       sensor: [
-        { rainfall },
-        { sensor_name: "Rainfall", value: rainfall.toString() },
+        { sensor_name: "Rainfall", value: rainfall }
       ],
     };
 
@@ -33,7 +32,7 @@ app.post("/proxy", async (req, res) => {
 
     const response = await axios.post(
       TARGET_URL,
-      { token: token },
+      { token },
       { headers: { "Content-Type": "application/json" } }
     );
 
@@ -47,11 +46,5 @@ app.post("/proxy", async (req, res) => {
   }
 });
 
-
-
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`✅ Proxy running on port ${PORT}`));
-
-
-
-
